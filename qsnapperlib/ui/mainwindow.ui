@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QSnapper - BTRFS Snapshots manager</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QTreeView" name="lstSnapshots"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="features">
+    <set>QDockWidget::NoDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Configs</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QListWidget" name="lstConfigs"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionOpen_Snapshot_in_file_manager"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit_2"/>
+   </widget>
+   <widget class="QMenu" name="menuSnapshot">
+    <property name="title">
+     <string>Snaps&amp;hot</string>
+    </property>
+    <addaction name="actionUpdate_list"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreate_new_snapshot"/>
+    <addaction name="actionDelete_this_snapshot"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="actionAbout_QSnapper"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSnapshot"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionNew_Snapshot">
+   <property name="text">
+    <string>&amp;New Snapshot</string>
+   </property>
+  </action>
+  <action name="actionRemove_Snapshot">
+   <property name="text">
+    <string>&amp;Remove Snapshot</string>
+   </property>
+  </action>
+  <action name="actionClean_Snapshot">
+   <property name="text">
+    <string>&amp;Clean Snapshot</string>
+   </property>
+  </action>
+  <action name="actionReload_list_of_snapshots">
+   <property name="text">
+    <string>Reload &amp;list of snapshots</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionMount_this_snapshot">
+   <property name="text">
+    <string>&amp;Mount this snapshot</string>
+   </property>
+  </action>
+  <action name="actionExport_this_snapshot_into_image">
+   <property name="text">
+    <string>&amp;Export this snapshot into image</string>
+   </property>
+  </action>
+  <action name="actionRefresh_snapshot_informations">
+   <property name="text">
+    <string>Refresh snapshot informations</string>
+   </property>
+  </action>
+  <action name="actionCreate_new_Snapshot">
+   <property name="text">
+    <string>Create new Snapshot</string>
+   </property>
+  </action>
+  <action name="actionDelete_Snapshots">
+   <property name="text">
+    <string>Delete Snapshots</string>
+   </property>
+  </action>
+  <action name="actionExplore_this_Snapshot">
+   <property name="text">
+    <string>Explore this Snapshot</string>
+   </property>
+  </action>
+  <action name="actionOpen_File_Manager">
+   <property name="text">
+    <string>Open File Manager</string>
+   </property>
+  </action>
+  <action name="actionMount_this_Snapshot">
+   <property name="text">
+    <string>Mount this Snapshot</string>
+   </property>
+  </action>
+  <action name="actionRollback_to_this_Snapshot">
+   <property name="text">
+    <string>Rollback to this Snapshot</string>
+   </property>
+  </action>
+  <action name="actionExport_Snapshot_Image">
+   <property name="text">
+    <string>&amp;Export Snapshot Image</string>
+   </property>
+  </action>
+  <action name="actionQuit_2">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionOpen_Snapshot_in_file_manager">
+   <property name="text">
+    <string>&amp;Open Snapshot in file manager</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionCreate_new_snapshot">
+   <property name="text">
+    <string>&amp;Create new snapshot</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionDelete_this_snapshot">
+   <property name="text">
+    <string>&amp;Delete this snapshot</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionUpdate_list">
+   <property name="text">
+    <string>&amp;Update list</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionRollback_to_this_snapshot">
+   <property name="text">
+    <string>&amp;Rollback to this snapshot</string>
+   </property>
+  </action>
+  <action name="actionCompare_files">
+   <property name="text">
+    <string>&amp;Compare files</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionAbout_QSnapper">
+   <property name="text">
+    <string>About QSnapper</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
