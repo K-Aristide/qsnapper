@@ -39,7 +39,7 @@ def getSnapperTree():
         if fstype != "" and subvolume != "":
             # Get list of snapshots from this config.
             list_from_path = subvolume + "/.snapshots/"
-            snapshots = list()
+            snapshots = dict()
             for direntry in glob(list_from_path + "/*"):
                 # Read information from info.xml
                 config_file = direntry + "/info.xml"
@@ -65,7 +65,7 @@ def getSnapperTree():
                 else:
                     associated = None
                 snapshotline = {"number":num_dir, "uid":uid, "description":snapdesc, "date":snapdate, "type":snaptype, "cleanup":snapcleanup , "pre":associated}
-                snapshots.append(snapshotline)
+                snapshots[num_dir] = (snapshotline)
                 
                 
             fullTree[name] = {"name":name, "subvolume":subvolume, "fstype":fstype, "snapshots":snapshots}

@@ -17,6 +17,7 @@ class NewSnapshotUi(QDialog):
         self.ui.lneName.textChanged.connect(self.generateCommand)
         self.ui.cmbCleanAlgo.currentTextChanged.connect(self.generateCommand)
         self.ui.cmbPaired.currentTextChanged.connect(self.generateCommand)
+        self.ui.cmbConfigs.currentTextChanged.connect(self.generateCommand)
         
         self.fillWindow()
         self.generateCommand()
@@ -33,9 +34,10 @@ class NewSnapshotUi(QDialog):
         for config in snappertree:
             self.ui.cmbConfigs.addItem(config)
             for snapshot in snappertree[config]["snapshots"]:
-                if snapshot["type"] == "pre": 
+                snapshotline = snappertree[config]["snapshots"][snapshot]
+                if snapshotline["type"] == "pre": 
                     # If its 'pre' snapshot, add in paired list.
-                    self.ui.cmbPaired.addItem(snapshot["number"])
+                    self.ui.cmbPaired.addItem(snapshotline["number"])
                     pre_count = pre_count + 1
             
             # We don't have found a pre snapshot, post can't be created

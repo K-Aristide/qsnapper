@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, qApp, QLabel, QProgressBar
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, qApp, QLabel, QProgressBar, QTreeView, QFileSystemModel
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtCore import QRunnable, QProcess, QObject, pyqtSignal, QThreadPool, Qt
 from qsnapperlib.ui.mainwindow import Ui_MainWindow
@@ -11,8 +11,7 @@ class ProcessSignalHandler(QObject):
     started = pyqtSignal()
     finish = pyqtSignal()
     error = pyqtSignal(str, str)
-    statusUpdate = pyqtSignal(str)
-    statusProgress = pyqtSignal(int)
+    output = pyqtSignal(str)
     
     def __init__(self):
         QObject.__init__(self)
@@ -43,17 +42,31 @@ class Runner(QRunnable):
     def appendLine(self):
         readLine = codecs.decode(self.process.readAllStandardOutput())
         self.content = "%s %s" % (self.content, readLine)
+        self.signals.output(readLine)
 
 class QStandardItem2(QStandardItem):
     def __init__(self, *args):
         QStandardItem.__init__(self, *args)
         self.setEditable(False)
+
+class QListSnapshot(QTreeView):
+    currentSelectionChanged = pyqtSignal(int, int)
+    def __init__(self, *args):
+        QTreeView.__init__(self, *args)
         
+    #def selectionChanged(self, newSelect, oldSelect):
+     #   self.currentSelectionChanged.emit(newSelect, oldSelect)
+    #    super().selectionChanged
+        
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        self.ui.lstSnapshots = QListSnapshot()
+        self.ui.layoutWindow.addWidget(self.ui.lstSnapshots)
         
         self.prgProcessing = QProgressBar()
         self.prgProcessing.setVisible(False)
@@ -61,8 +74,11 @@ class MainWindow(QMainWindow):
         self.ui.lstSnapshots.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.lstSnapshots.customContextMenuRequested.connect(self._displayMenu)
         
+        
         self.ui.statusbar.addWidget(self.prgProcessing)
         self.ui.statusbar.addWidget(self.lblProcessing)
+        
+        self.ui.dockInfo.setVisible(False)
         
         self.processing = QThreadPool()
         
@@ -71,6 +87,9 @@ class MainWindow(QMainWindow):
         self.ui.actionDelete_this_snapshot.triggered.connect(self._delete)
         self.ui.actionUpdate_list.triggered.connect(self.refreshSnapshots)
         self.ui.actionCreate_new_snapshot.triggered.connect(self._addSnapshot)
+        self.ui.lstSnapshots.activated.connect(self._updateInfo)
+        
+        self.previousSelected = None
         
         self.ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
         
@@ -84,7 +103,39 @@ class MainWindow(QMainWindow):
         
         self.show()
     
-
+    
+    def _updateInfo(self, index):
+        """Update info on right pannel"""
+        # Check if previous has selected
+        if self.previousSelected != None:
+            pass
+            
+        #TODO : Background in Line
+        
+        conf = self.getSelectedConfig()
+        num = self.getSelectedSnapshot()
+        if num == None:
+            return
+        
+        snap = self.configs[conf]["snapshots"][num]
+        
+        self.ui.lblConfig.setText(conf)
+        self.ui.lblSelectSnapshot.setText(num)
+        self.ui.lblDate.setText(snap["date"])
+        self.ui.dockInfo.setVisible(True)
+        self.ui.lblSize.setText("Work In Progress")
+        
+        rootpath = "%s/.snapshots/%s/snapshot" % (self.configs[conf]["subvolume"], num)
+       
+        if  self.ui.treeContent.model() != None:
+            self.ui.treeContent.setModel(None)
+        
+        fs = QFileSystemModel()
+        self.ui.treeContent.setRootIndex(fs.index(rootpath + "/*.*"))
+    
+        print("Define %s root path" % (rootpath))
+        self.ui.treeContent.setModel(fs)
+        
     def updateLists(self):
         """Reload only internal Snapshots and configs list"""
         self.configs = getSnapperTree()
@@ -99,16 +150,17 @@ class MainWindow(QMainWindow):
 
         # List all snapshots
         for snapshot in self.configs[config]["snapshots"]:
-            number = QStandardItem2(snapshot["number"])
+            snapshotline = self.configs[config]["snapshots"][snapshot]
+            number = QStandardItem2(snapshotline["number"])
             number.setIcon(QIcon.fromTheme("camera-photo"))
             number.setCheckable(True)
             # If its a post snapshot, get associated pre snapshot. If not, put nothing.
-            if snapshot["type"] == "post":
-                associated = snapshot["pre"]
+            if snapshotline["type"] == "post":
+                associated = snapshotline["pre"]
             else:
                 associated = ""
             
-            model.appendRow([QStandardItem2(number), QStandardItem2(snapshot["uid"]), QStandardItem2(snapshot["description"]), QStandardItem2(snapshot["date"]), QStandardItem2(snapshot["type"]), QStandardItem2(snapshot["cleanup"]) ,QStandardItem2(snapshot["pre"])])
+            model.appendRow([QStandardItem2(number), QStandardItem2(snapshotline["uid"]), QStandardItem2(snapshotline["description"]), QStandardItem2(snapshotline["date"]), QStandardItem2(snapshotline["type"]), QStandardItem2(snapshotline["cleanup"]) ,QStandardItem2(snapshotline["pre"])])
             
         self.ui.lstSnapshots.setModel(model)
         for column in range(self.ui.lstSnapshots.model().columnCount()):
@@ -124,6 +176,7 @@ class MainWindow(QMainWindow):
         """ Reload all snapshots content """
         self.updateLists()
         self.fillSnapshots()
+        self.ui.dockInfo.setVisible(False)
     
     def getSelectedConfig(self):
         """Return the name of actual config
